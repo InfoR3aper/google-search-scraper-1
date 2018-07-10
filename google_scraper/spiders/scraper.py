@@ -15,3 +15,12 @@ class ScraperSpider(scrapy.Spider):
         words = ['Michael', 'Scrapy']
         for x in range(len(words)):
             yield SplashRequest(f'https://google.com/search?q={words[x]}&num=100')
+
+    def parse(self, response):
+        item = GoogleScraperItem()
+        names = response.xpath('//div[contains(@class, "rc")]/h3[contains(@class, "r")]/a/text()').extract()
+        urls = response.xpath('//div[contains(@class, "f hJND5c TbwUpd")]/cite/text()').extract()
+        for num in range(len(names)):
+            item['name'] = names[num]
+            item['url'] = urls[num]
+            yield item
